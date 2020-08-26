@@ -1,6 +1,9 @@
 import pygame
 import os
 import random
+
+from vectors import *
+
 pygame.font.init()
 
 WIN_HEIGHT = 600
@@ -11,34 +14,7 @@ def load_file(name):
     return pygame.image.load(os.path.join("imgs", name + ".png"))
 
 
-class Vector:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.initial = (x, y)
 
-    def reset(self, x=True, y=True):
-        if x:
-            self.x, _ = self.initial
-        if y:
-            self.y, _ = self.initial
-
-
-
-class Velocity(Vector):
-    def __init__(self, x, y):
-        super().__init__(x, y)
-
-    def change_magnitude(self):
-        multiplier = 1.1
-        self.x *= multiplier
-        self.y *= multiplier
-
-    def change_x_direction(self):
-        self.x *= -1
-
-    def change_y_direction(self):
-        self.y *= -1
 
 
 class Platform:
