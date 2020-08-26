@@ -117,7 +117,7 @@ class Pong:
         return False
 
     def passed(self, platform):
-        if self.position.x < MARGIN + platform.IMG.get_width() or self.position.x > WIN_WIDTH - MARGIN - platform.IMG.get_width():
+        if self.position.x < MARGIN + platform.IMG.get_width() - self.IMG.get_width()/2 or self.position.x > WIN_WIDTH - MARGIN - platform.IMG.get_width() -self.IMG.get_width() / 2:
             return True
         else:
             return False
@@ -173,6 +173,7 @@ class Game:
                     self.pong.velocity.change_magnitude()
                 else:
                     self.pong.velocity.change_y_direction()
+                    self.pong.position.reset()
 
 
     def main(self):
