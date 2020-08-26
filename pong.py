@@ -17,22 +17,28 @@ class Vector:
         self.y = y
         self.initial = (x, y)
 
-    def change_x_direction(self):
-        self.x *= -1
+    def reset(self, x=True, y=True):
+        if x:
+            self.x, _ = self.initial
+        if y:
+            self.y, _ = self.initial
 
-    def change_y_direction(self):
-        self.y *= -1
 
-    def reset(self):
-        (self.x, self.y) = self.initial
 
-    def to_draw(self):
-        return (self.x, WIN_HEIGHT - self.y)
+class Velocity(Vector):
+    def __init__(self, x, y):
+        super().__init__(x, y)
 
     def change_magnitude(self):
         multiplier = 1.1
         self.x *= multiplier
         self.y *= multiplier
+
+    def change_x_direction(self):
+        self.x *= -1
+
+    def change_y_direction(self):
+        self.y *= -1
 
 
 class Platform:
@@ -42,7 +48,7 @@ class Platform:
 
     def __init__(self, place=None):
         self.position = Vector(MARGIN, WIN_HEIGHT/2)
-        self.velocity = Vector(0, 0)
+        self.velocity = Velocity(0, 0)
         if place:
             self.player_wasd = True
         else:
@@ -81,7 +87,7 @@ class Pong:
 
     def reset(self):
         self.position = Vector(WIN_WIDTH / 2, WIN_HEIGHT / 2)
-        self.velocity = Vector(random.randint(-7, 7), random.randint(-7, 7))
+        self.velocity = Velocity(random.randint(-7, 7), random.randint(-7, 7))
         if abs(self.velocity.x) < 3:
             self.reset()
 
@@ -96,6 +102,7 @@ class Pong:
             self.reset()
 
         if self.position.y < 0 or self.position.y > WIN_HEIGHT - self.IMG.get_height():
+            self.position.y - WIN_HEIGHT - self.IMG.get_height()
             self.velocity.change_y_direction()
 
     def get_mask(self):
@@ -107,8 +114,14 @@ class Pong:
 
         if collision_point:
             return True
-
         return False
+
+    def passed(self, platform):
+        if self.position.x < MARGIN + platform.IMG.get_width() or self.position.x > WIN_WIDTH - MARGIN - platform.IMG.get_width():
+            return True
+        else:
+            return False
+
 
 
 
@@ -154,8 +167,12 @@ class Game:
 
         for platform in self.platforms:
             if self.pong.collide(platform):
-                self.pong.velocity.change_x_direction()
-                self.pong.velocity.change_magnitude()
+                self.pong.velocity.y += platform.velocity.y
+                if not self.pong.passed(platform):
+                    self.pong.velocity.change_x_direction()
+                    self.pong.velocity.change_magnitude()
+                else:
+                    self.pong.velocity.change_y_direction()
 
 
     def main(self):
