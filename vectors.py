@@ -1,3 +1,5 @@
+from copy import copy
+
 class Vector:
     def __init__(self, x, y):
         self.x = x
@@ -15,13 +17,22 @@ class Vector:
         return (self.x ** 2 + self.y ** 2) ** 0.5
 
     def __add__(self, other):
-        return Vector(self.x + other.x, self.y + self.y)
+        obj = copy(self)
+        obj.x = self.x + other.x
+        obj.y = self.y + other.y
+        return obj
 
     def __sub__(self, other):
-        return Vector(self.x - other.x, self.y - other.y)
+        obj = copy(self)
+        obj.x = self.x - other.x
+        obj.y = self.y - other.y
+        return obj
 
     def __mul__(self, other):
-        return Vector(self.x * other.x, self.y * other.y)
+        obj = copy(self)
+        obj.x = self.x * other.x
+        obj.y = self.y * other.y
+        return obj
 
 class Position(Vector):
     def __init__(self, x, y):
@@ -42,7 +53,7 @@ class Velocity(Vector):
     def change_magnitude(self):
         multiplier = 1.1
         self.x *= multiplier
-        # self.y *= multiplier
+        self.y /= multiplier
 
     def change_x_direction(self):
         self.x *= -1
